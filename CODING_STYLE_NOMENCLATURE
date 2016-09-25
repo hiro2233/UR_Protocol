@@ -1,0 +1,122 @@
+INDEX
+=====
+
+    º Introduction
+    º Coding style and nomenclature
+        - Data types definitions
+        - Variable names statements
+        - Data type register statements
+        - Funtions statements
+        - Class statements
+
+Introduction
+============
+
+    This coding style follow the APM Dev Team code style standard and plus a URUS
+    code style for profesional and serius development. We love open source development
+    and people need to understand that Open Source development are very serius and
+    profesional too.
+
+    This code style are focused for universities and companies educational purposes too.
+
+Coding style and nomenclature
+=============================
+
+Data types definitions
+----------------------
+
+    Tag namespace begin with two underscore "__" characters followed by the
+    keywords names separated with one underscore "_" character and finishing the tag
+    namespace with "_t" characters. Typedef namespace begin without any underscores
+    and for the inline definition maintain the same nomenclature like tag name.
+    Data type definitions have a 32 characters as a max.
+
+    i.e.:
+
+        typedef struct __urus_buffer_info_t
+        {
+            ...
+        } urus_buffer_info_t;
+
+Variable names statements
+-------------------------
+
+    All public, global, local and in functions parameters variable keyword name are
+    declared with lowercase without any other surrounding characters, but it can be
+    separated keyword name with a underscore "_" character. No one variable are
+    declared with only one character, all variable are declared with complete keyword
+    name. Each variable keyword name has a 32 charaters as max.
+
+    i.e.:
+
+        uint32_t ins_counter1;
+        uint8_t couter_len;
+
+    All private variable keyword name are declared begining with a underscore "_" charater
+    followed by the lowercase keyword name.
+
+    i.e.:
+
+        uint32_t _ins_counter1;
+        uint8_t _couter_len;
+
+Data type register statements
+-----------------------------
+
+    All public, global, local and in functions parameters begin with "ur_" followed by
+    the keyword name with lowercase without any other surrounding characters, but it can
+    be separated keyword name with a underscore "_" character.
+
+    i.e.:
+
+        urus_txreg_t ur_txreg;
+
+    All private data type register begin with "_ur_" followed by the keyword name with lowercase
+    without any other surrounding characters, but it can be separated keyword name with a
+    underscore "_" character.
+
+    i.e.:
+
+        urus_txreg_t _ur_txreg;
+
+Class statements
+----------------
+
+    Begin with "CL_" characters without any other surrounding characters and each first
+    keyword names statements begin with uppercase, it don't be separated keyword name
+    with a underscore "_" character.
+
+    i.e.:
+
+    class CL_UrusProtocol {
+    public:
+        ...
+
+    private:
+        ...
+
+    };
+
+Funtions statements
+-------------------
+
+    Each first keyword names functions statements begin with uppercase on Public without
+    any other surrounding characters, but it can be separated keyword name with a underscore
+    "_" character.
+
+    i.e.:
+
+    class CL_UrusProtocol {
+    public:
+        ...
+        uint8_t Buf_Updated(BUFType typebuf);
+        uint8_t Process_RxTxData(uint8_t rx_dat, uint8_t offset_rx);
+        ...
+
+    private:
+        ...
+        uint8_t _SerializeMessage(uint8_t reg, uint8_t* ptr_msg_data, uint8_t include_hdrid);
+        void _Set_DataReg(uint8_t* ptr_reg);
+        ...
+
+    };
