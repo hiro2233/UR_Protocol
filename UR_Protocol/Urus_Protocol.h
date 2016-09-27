@@ -19,14 +19,14 @@ class CL_UrusProtocol {
     CL_UrusProtocol(void);
     CL_UrusProtocol(uint16_t hdrid);
 
-    uint8_t Check_RegLen(uint8_t reg);
+    uint8_t Get_RegLen(uint8_t reg);
     urus_headerid_t Get_HeaderId(void);
 
     template<typename A>
-    void Get_DataReg(A &ptr_reg) { _Get_DataReg((uint8_t*)&ptr_reg); };
+    uint8_t Get_DataReg(A &ptr_reg) { return _Get_DataReg((uint8_t*)&ptr_reg); };
 
     template<typename A>
-    void Set_DataReg(A &ptr_reg) { _Set_DataReg((uint8_t*)&ptr_reg); };
+    uint8_t Set_DataReg(A &ptr_reg) { return _Set_DataReg((uint8_t*)&ptr_reg); };
 
     template<typename T>
     void caca(T &func) {
@@ -36,8 +36,11 @@ class CL_UrusProtocol {
     };
 
     void Get_Instance(uint8_t* ptr_reg, uint8_t instance);
-    static void Create_Obj(URUSObj obj_type, urus_slot_info_t& slot_info);
-    static void Create_Obj(uint8_t reg, urus_slot_info_t& slot_info);
+    uint8_t Create_Obj(URUSObj obj_type, urus_slot_info_t& slot_info);
+    uint8_t Create_Obj(uint8_t reg, urus_slot_info_t& slot_info);
+
+    //template<typename A>
+    //static uint8_t Create_Object(A &ref_obj);
 
     void Header16_LittlEndian(uint16_t& temp_data, uint8_t& rx_dat);
     void Header16_BigEndian(uint16_t& temp_data, uint8_t& rx_dat);
@@ -45,10 +48,16 @@ class CL_UrusProtocol {
 
     poll_rx_tx_info_t Poll_Tx_CommandRequest();
     uint8_t Poll_Rx_Buffer();
+    uint8_t Poll_Rx_Buffer2(uint8_t data);
+    uint8_t Poll_Tx_Buffer2();
+
     poll_rx_tx_info_t Poll_RxTxData(uint8_t data);
 
     void Prepare_Msg(uint8_t reg, uint8_t* msg_data);
     uint8_t Process_RxTxData(uint8_t rx_dat, uint8_t offset_rx);
+
+    uint8_t Input_RxData(uint8_t data);
+    uint8_t Process_Data(uint8_t data, uint8_t offset);
 
     uint8_t Buf_Updated(BUFType typebuf);
     uint8_t Get_Buf_Len(BUFType typebuf);
@@ -72,8 +81,8 @@ class CL_UrusProtocol {
   private:
 
     uint8_t _SerializeMessage(uint8_t ptr_reg, uint8_t* msg_data, uint8_t include_hdrid);
-    void _Set_DataReg(uint8_t* ptr_reg);
-    void _Get_DataReg(uint8_t* ptr_reg);
+    static uint8_t _Set_DataReg(uint8_t* ptr_reg);
+    static uint8_t _Get_DataReg(uint8_t* ptr_reg);
 
     urus_headerid_t _ur_headerid;
     static urus_objects_t _ur_objects[URUS_MAX_SLOTS];
@@ -81,5 +90,7 @@ class CL_UrusProtocol {
     urus_txreg_t _ur_txreg;
     uint8_t *_rxdat;
     urus_buffer_info_t _ur_buffer_inf;
+    uint8_t _in_txbuffer;
+    uint8_t _in_rxbuffer;
 
 };

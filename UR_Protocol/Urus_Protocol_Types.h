@@ -17,7 +17,8 @@
 /* URUS Protocol base  objects names registers */
 enum URUSObj {
     URUS_REG_TXREG = BASE_ADDR_URUS,
-	URUS_REG_RC_CHAN
+	URUS_REG_RC_CHAN,
+    URUS_REG_COUNT
 };
 
 enum BUFType {
@@ -51,19 +52,21 @@ public:
 /// OBJECT NAME: "urus_objects_t".
 /// @reg URUS Address register.
 /// @ptr_obj Pointer where allocate Registers Objects dinamically.
-/// @Len The length of data hold.
+/// @len The length of data hold.
 
 typedef struct __urus_objects_t
 {
     uint8_t reg;
     uint8_t *ptr_obj;
-    uint16_t Len;
+    uint8_t pos;
+    uint8_t len;
 
 public:
 	__urus_objects_t():
 	   reg(0),
-       Len(0),
-       ptr_obj(NULL)
+       pos(0),
+       ptr_obj(NULL),
+       len(0)
 	{}
 
 } urus_objects_t;
