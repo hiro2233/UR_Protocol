@@ -41,7 +41,7 @@ CL_UrusProtocol::CL_UrusProtocol(uint16_t hdrid):
         _ur_headerid.hdrid = URUS_HEADERID;
     }
     
-    checkendianess = CheckLittleEndianness();
+    //checkendianess = CheckLittleEndianness();
 }
 
 CL_UrusProtocol::CL_UrusProtocol(void):
@@ -61,7 +61,7 @@ CL_UrusProtocol::CL_UrusProtocol(void):
     _in_rxbuffer(0)
 {
     _ur_headerid.hdrid = URUS_HEADERID;
-    checkendianess = CheckLittleEndianness();
+    //checkendianess = CheckLittleEndianness();
 }
 
 uint8_t CL_UrusProtocol::_SerializeMessage(uint8_t reg, uint8_t* msg_data, uint8_t include_hdrid)
@@ -110,7 +110,7 @@ uint8_t CL_UrusProtocol::Get_RegLen(uint8_t reg)
     return len;
 }
 
-uint8_t CL_UrusProtocol::_Set_DataReg(uint8_t* ptr_reg)
+uint8_t CL_UrusProtocol::Set_DataReg(uint8_t* ptr_reg)
 {
     uint8_t reg;
     //memcpy(&reg, ptr_reg, 1);
@@ -142,7 +142,7 @@ uint8_t CL_UrusProtocol::_Set_DataReg(uint8_t* ptr_reg)
     return 0;
 }
 
-uint8_t CL_UrusProtocol::_Get_DataReg(uint8_t* ptr_reg)
+uint8_t CL_UrusProtocol::Get_DataReg(uint8_t* ptr_reg)
 {
     uint8_t reg;
     //memcpy(&reg, ptr_reg, 1);
@@ -204,12 +204,15 @@ bool CL_UrusProtocol::CheckLittleEndianness()
 {
     uint16_t a=0x1234;
     if (*((uint8_t *)&a)==0x12) {
+        checkendianess = false;
 	    return false;
         //hal.console->printf("BIG\n");
 	} else {
         return true;
+        checkendianess = true;
         //hal.console->printf("LITTLE\n");
     }
+    
 }
 
 /// <summary>
@@ -290,101 +293,6 @@ const uint8_t* CL_UrusProtocol::Get_Buf(BUFType typebuf)
     return buffer;
 }
 
-poll_rx_tx_info_t CL_UrusProtocol::Poll_Tx_CommandRequest()
-{
-    //poll_rx_tx_error_t poll_error;
-    poll_rx_tx_info_t poll_inf;
-
-    if (fire_data_tx) {
-
-        fire_data_tx = false;
-        for (uint8_t i = 0; i < count_len; i++) {
-            Process_RxTxData(rx_buffer[i], 0);
-            rx_buffer[i] = 0;
-        }
-
-        uint8_t len;
-        len = Get_RegLen(_ur_txreg.TargetReg);
-        delete tx_buffer;
-        tx_buffer = new uint8_t[len];
-        _ur_buffer_inf.txupdated = _SerializeMessage(_ur_txreg.TargetReg, tx_buffer, 0);
-
-        if (_ur_buffer_inf.txupdated) {
-            _ur_buffer_inf.txlen = len;
-
-            poll_inf.poll_error = poll_rx_tx_error_t::PO_TX_OK;
-        }
-
-        is_tx_request = false;
-        fire_data_rx = false;
-        counter_dat = 0;
-    }
-
-    return poll_inf;
-}
-
-uint8_t CL_UrusProtocol::Poll_Rx_Buffer()
-{
-    if (fire_data_rx) {
-
-        fire_data_rx = false;
-
-        for (uint8_t i = 0; i < count_len; i++) {
-            Process_RxTxData(rx_buffer[i], 0);
-            rx_buffer[i] = 0;
-        }
-
-        return 1;
-    }
-
-    return 0;
-}
-
-poll_rx_tx_info_t CL_UrusProtocol::Poll_RxTxData(uint8_t data)
-{
-    poll_rx_tx_info_t poll_inf;
-
-    if ((!fire_data_rx) && (!is_tx_request)) {
-        if (hit_header) {
-            rx_buffer[counter_dat] = data;
-            Process_RxTxData(data, 0);
-            if (count_len == 0) {
-               count_len = Get_RegLen(data);
-            }
-            if (((count_len - counter_dat) == 0) && (count_len != 0)) {
-                if (count_len <= sizeof(urus_txreg_t)) {
-                    fire_data_tx = true;
-                    is_tx_request = true;
-                    fire_data_rx = false;
-                    hit_header = false;
-                //uint8_t rx_buffer_temp[URUS_LEN_HEADERS];
-                //for (uint8_t i = 0; i < URUS_LEN_HEADERS; i++) {
-                    //rx_buffer_temp[i] = rx_buffer[i];
-                //}
-                //delete rx_buffer;
-                //rx_buffer = new uint8_t[count_len];
-                //rx_buffer = rx_buffer_temp;
-                } else {
-                    fire_data_rx = true;
-                    hit_header = false;
-                    is_tx_request = false;
-                    fire_data_tx = false;
-                }
-                poll_inf.poll_error = poll_rx_tx_error_t::PO_RX_OK;
-            }
-            counter_dat++;
-        } else {
-            counter_dat = 0;
-            Process_RxTxData(data, 0);
-        }
-    }
- 
-    //poll_rx_tx_info_t poll_temp = Poll_Tx_CommandRequest();
-    //poll_inf.poll_error = poll_temp.poll_error | poll_inf.poll_error;
-
-    return poll_inf;
-}
-
 uint8_t CL_UrusProtocol::Create_Obj(URUSObj obj_type, urus_slot_info_t& slot_info)
 {
     slot_error_t uerror;
@@ -431,15 +339,6 @@ uint8_t CL_UrusProtocol::Create_Obj(uint8_t reg, urus_slot_info_t& slot_info)
     return 0;
 }
 
-//template<typename A>
-//uint8_t CL_UrusProtocol::Create_Object(A &ref_obj)
-//{
-    //urus_slot_info_t slot;
-    //hal.console->printf_P(PSTR("Size: %u \n"), sizeof(ref_obj));
-
-    //return Create_Obj(ref_obj.reg, slot);
-//}
-
 void CL_UrusProtocol::Get_Instance(uint8_t *ptr_reg, uint8_t instance)
 {
     uint8_t reg;
@@ -455,120 +354,6 @@ void CL_UrusProtocol::Get_Instance(uint8_t *ptr_reg, uint8_t instance)
     }
 }
 
-uint8_t CL_UrusProtocol::Process_RxTxData(uint8_t rx_dat, uint8_t offset_rx)
-{
-    static uint8_t counterdat = 0;
-    static uint8_t count_offset = 0;
-    static bool hit = false;
-    static uint8_t countlen = 0;
-    static uint16_t headeridcheck = 0;
-    static uint16_t headerid = 0;
-    static bool is_tx = false;
-
-    if (count_offset < offset_rx) {
-        count_offset++;
-        return 0;
-    }
-
-    //Check if hit with headerid
-    if (!hit) {
-        RingCheck_HeaderId(headerid, rx_dat);
-    } else {
-        /*  We check constantly the headerid and compare if it's
-            got again and check if the last data received was in process,
-            if it's trigger, thats very bad and means we have a fragmented
-            data, maybe master are sending very fast the enterely command
-            or something else.
-        */
-        RingCheck_HeaderId(headeridcheck, rx_dat);
-
-        if ((headerid == headeridcheck) && (hit)) {
-            hal.console->printf("Fragmented\n");
-            goto RESET_ALL;
-        }
-    }
-
-    /* It's are jumping when a new data register are incoming,
-       when hit with header id, then enter to complete register id verification,
-       first we check if the register id is a command request or are sending a data
-       payload, if got a command request then jump to send process the register requested,
-       if we doesn't got a command request then we enter to buffering process if got it,
-       then we store payload length as fast as possible in to URUS Objects slots
-       if there is one space available, if not, we throw an error info.
-    */
-
-    if ((headerid == (uint16_t)URUS_HEADERID) && (!hit_header)) {
-
-        if (hit) {
-            if (counterdat != 0) {
-                _rxdat[counterdat] = rx_dat;
-            }
-        } else {
-            hit = true;
-            hit_header = hit;
-            return 0;
-        }
-
-        //check the size register, if got a valid address register then return the lenght.
-        if ((counterdat == 0) && (hit)) {
-            //hal.console->printf("REG: %u\n", dat1);
-            countlen = Get_RegLen(rx_dat);
-            delete _rxdat;
-            _rxdat = new uint8_t[(countlen + 2)];
-            _rxdat[0] = rx_dat;
-            if (countlen == 0) {
-                //hal.console->printf("Reset\n");
-                goto RESET_ALL;
-            }
-        }
-
-        if ((_rxdat[0] == _ur_txreg.reg) && (is_tx == false)) {
-            is_tx = true;
-            is_tx_request = is_tx;
-            counterdat++;
-            return 0;
-        }
-
-        if (is_tx) {
-            hal.console->printf("Proc TX\n");
-            _ur_txreg.TargetReg = _rxdat[1];
-            is_tx = false;
-            goto RESET_ALL;
-        }
-
-        counterdat++;
-        if ((counterdat >= countlen) && (!is_tx))
-        {
-            urus_slot_info_t slotinfo;
-            //urus_rc_chan_t chan;
-            //Create_Object(chan);
-            Create_Obj(_rxdat[0], slotinfo);
-            _Set_DataReg(_rxdat);
-
-#ifdef DEBUG_URUS
-            hal.console->printf("RECIBIDO SlotError: %u \n", slotinfo.UError);
-            hal.console->printf("RECIBIDO dat0:%x dat1:%x dat2:%x dat3:%x dat4:%x dat5:%x dat6:%x SPSR:%x \n", _rxdat[0], _rxdat[1], _rxdat[2], _rxdat[3], _rxdat[4], _rxdat[5], _rxdat[6], headerid); 
-#endif
-            goto RESET_ALL;
-        }
-     }
-
-return 0;
-
-RESET_ALL:
-    counterdat = 0;
-    counter_dat = counterdat;
-    hit = false;
-    hit_header = hit;
-    headerid = 0;
-    headeridcheck = 0;
-    countlen = 0;
-    count_len = countlen;
-    fire_data_rx = false;
-    count_offset = 0;
-    is_tx = false;
-return 1;
-}
 
 uint8_t CL_UrusProtocol::Process_Data(uint8_t data, uint8_t offset)
 {
@@ -629,11 +414,10 @@ uint8_t CL_UrusProtocol::Process_Data(uint8_t data, uint8_t offset)
                 return 0;
             }
 
-            
             //hal.console->printf("REG: %u\n", dat1);
             if (checking_reg_len) {
                 countlen = Get_RegLen(data);
-                //hal.console->printf("countlen: %u\n", countlen);
+                hal.console->printf("c: %u\n", countlen);
                 if (countlen == 0) {
                     hal.console->printf("Reset count!\n");
                     sprintf(msgbox, "counter");
@@ -657,10 +441,10 @@ uint8_t CL_UrusProtocol::Process_Data(uint8_t data, uint8_t offset)
                 hal.console->printf_P(PSTR("ProcTX Reg:0x%x Targe: 0x%x\n"), _ur_txreg.reg, _ur_txreg.TargetReg);
                 //is_tx = false;
                 _in_txbuffer = 1;
+                sprintf(msgbox, "Is_tx" );
                 goto RESET_ALL2;
             }
-            
-            
+
             checking_reg_len = false;
             delete rx_buffer;
             rx_buffer = new uint8_t[countlen];
@@ -668,68 +452,15 @@ uint8_t CL_UrusProtocol::Process_Data(uint8_t data, uint8_t offset)
             rx_buffer[0] = data;
             _in_rxbuffer = 1;
 
-            
-/*
-        if (hit) {
-            if (counterdat != 0) {
-                _rxdat[counterdat] = data;
-            }
-        } else {
-            hit = true;
-            hit_header = hit;
-            return 0;
-        }
-
-        //check the size register, if got a valid address register then return the lenght.
-        if ((counterdat == 0) && (hit)) {
-            //hal.console->printf("REG: %u\n", dat1);
-            countlen = Get_RegLen(rx_dat);
-            delete _rxdat;
-            _rxdat = new uint8_t[(countlen + 2)];
-            _rxdat[0] = rx_dat;
-            if (countlen == 0) {
-                //hal.console->printf("Reset\n");
-                goto RESET_ALL;
-            }
-        }
-
-        if ((_rxdat[0] == _ur_txreg.reg) && (is_tx == false)) {
-            is_tx = true;
-            is_tx_request = is_tx;
-            counterdat++;
-            //return 0;
-        }
-
-        if (is_tx) {
-            hal.console->printf("Proc TX\n");
-            _ur_txreg.TargetReg = _rxdat[1];
-            is_tx = false;
-            goto RESET_ALL;
-        }
-
-        counterdat++;
-        if ((counterdat >= countlen) && (!is_tx))
-        {
-            urus_slot_info_t slotinfo;
-            //urus_rc_chan_t chan;
-            //Create_Object(chan);
-            Create_Obj(_rxdat[0], slotinfo);
-            _Set_DataReg(_rxdat);
-*/
         if (hit) {
             //hit = false;
-
             //hal.console->printf("RECIBIDO SlotError: %u \n", slotinfo.UError);
             //hal.console->printf("RECIBIDO dat0:%x dat1:%x dat2:%x dat3:%x dat4:%x dat5:%x dat6:%x SPSR:%x \n", rx_buffer[0], rx_buffer[1], rx_buffer[2], rx_buffer[3], rx_buffer[4], rx_buffer[5], rx_buffer[6], headerid); 
-            //sprintf(msgbox, "recibido" );
+            sprintf(msgbox, "recibido hit" );
             
             goto RESET_ALL2;
 
         }
-        
-        //goto RESET_ALL;
-        //}
-
     }
 
 return 0;
@@ -747,13 +478,12 @@ RESET_ALL2:
     count_offset = 0;
     is_tx = false;
     checking_reg_len = false;
-    //hal.console->printf("all reset %s! \n", msgbox);
+    hal.console->printf("all reset %s! \n", msgbox);
 return 1;
 }
 
 uint8_t CL_UrusProtocol::Input_RxData(uint8_t data)
 {
-    //poll_rx_tx_info_t poll_inf;
 
     Process_Data(data, 0);
     Poll_Rx_Buffer2(data);
@@ -763,25 +493,20 @@ uint8_t CL_UrusProtocol::Input_RxData(uint8_t data)
 
 uint8_t CL_UrusProtocol::Poll_Rx_Buffer2(uint8_t data)
 {
-    //static uint8_t count_rxdat = 0;
 
     if (_in_rxbuffer) {
             counter_dat++;
             
         if (counter_dat < (Get_RegLen(rx_buffer[0]))) {
             rx_buffer[counter_dat] = data;
-            
-            //counter_dat %= (_ur_buffer_inf.rxlen);
+
         }
 
         if (counter_dat >= Get_RegLen(rx_buffer[0])) {
             _in_rxbuffer = 0;
-            //_ur_buffer_inf.rxupdated = 1;
             urus_slot_info_t slotinfo;
-            //urus_rc_chan_t chan;
-            //Create_Object(chan);
             Create_Obj(rx_buffer[0], slotinfo);
-            _ur_buffer_inf.rxupdated = _Set_DataReg(&rx_buffer[0]);
+            _ur_buffer_inf.rxupdated = Set_DataReg(&rx_buffer[0]);
             hal.console->printf("RECIBIDO dat0:%x dat1:%x dat2:%x dat3:%x dat4:%x dat5:%x dat6:%x \n", rx_buffer[0], rx_buffer[1], rx_buffer[2], rx_buffer[3], rx_buffer[4], rx_buffer[5], rx_buffer[6]); 
             for (uint8_t i = 0; i < Get_RegLen(rx_buffer[0]); i++) {
                 rx_buffer[i] = 0;

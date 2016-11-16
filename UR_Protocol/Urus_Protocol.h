@@ -22,18 +22,21 @@ class CL_UrusProtocol {
     uint8_t Get_RegLen(uint8_t reg);
     urus_headerid_t Get_HeaderId(void);
 
-    template<typename A>
-    uint8_t Get_DataReg(A &ptr_reg) { return _Get_DataReg((uint8_t*)&ptr_reg); };
+    //template<typename A>
+    //uint8_t Get_DataReg(A &ptr_reg) { return _Get_DataReg((uint8_t*)&ptr_reg); };
 
-    template<typename A>
-    uint8_t Set_DataReg(A &ptr_reg) { return _Set_DataReg((uint8_t*)&ptr_reg); };
+    //template<typename A>
+    //uint8_t Set_DataReg(A &ptr_reg) { return _Set_DataReg((uint8_t*)&ptr_reg); };
 
-    template<typename T>
-    void caca(T &func) {
-        uint8_t* buf;
-        uint8_t len;
-        func(buf, len); 
-    };
+    uint8_t Set_DataReg(uint8_t* ptr_reg);
+    uint8_t Get_DataReg(uint8_t* ptr_reg);
+
+    //template<typename T>
+    //void caca(T &func) {
+        //uint8_t* buf;
+        //uint8_t len;
+        //func(buf, len); 
+    //};
 
     void Get_Instance(uint8_t* ptr_reg, uint8_t instance);
     uint8_t Create_Obj(URUSObj obj_type, urus_slot_info_t& slot_info);
@@ -81,8 +84,8 @@ class CL_UrusProtocol {
   private:
 
     uint8_t _SerializeMessage(uint8_t ptr_reg, uint8_t* msg_data, uint8_t include_hdrid);
-    static uint8_t _Set_DataReg(uint8_t* ptr_reg);
-    static uint8_t _Get_DataReg(uint8_t* ptr_reg);
+    //uint8_t _Set_DataReg(uint8_t* ptr_reg);
+    //uint8_t _Get_DataReg(uint8_t* ptr_reg);
 
     urus_headerid_t _ur_headerid;
     static urus_objects_t _ur_objects[URUS_MAX_SLOTS];
