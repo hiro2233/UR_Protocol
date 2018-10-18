@@ -95,3 +95,7 @@ cmake_install.cmake
 *.apj
 *.layout
 *.depend
+*bin/
+*obj/
+*.obj/
+
