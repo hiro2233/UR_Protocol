@@ -62,3 +62,36 @@
 # Debug files
 *.dSYM/
 
+# Misc
+
+Thumbs.db
+*.bin
+*.d
+*.dfu
+*.dll
+*.elf
+*.exe
+*.generated.h
+*.hex
+*.lst
+*.o
+*.obj
+*.px4
+*.pyc
+*.tlog
+*.tlog.raw
+*.vbrain
+*.vrx
+*.zip
+*~
+.*.swo
+.*.swp
+*.i
+*.ii
+CMakeCache.txt
+CMakeFiles
+build
+cmake_install.cmake
+*.apj
+*.layout
+*.depend
