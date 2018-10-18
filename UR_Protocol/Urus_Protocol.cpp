@@ -20,17 +20,10 @@
     <https://www.gnu.org/licenses/>.
  */
 
-#define APM_BUILD_DIR
-#ifdef APM_BUILD_DIR
-#include <AP_HAL/AP_HAL.h>
-#include <stdio.h>
-extern const AP_HAL::HAL& hal;
-#else
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#endif
 
 #include "URUS_Protocol.h"
 

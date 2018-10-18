@@ -22,30 +22,13 @@
 
 #pragma once
 
-#define APM_BUILD_DIR
-#ifdef APM_BUILD_DIR
-#include <AP_HAL/AP_HAL.h>
-#ifndef PROGMEM
-#define PROGMEM
-#endif
-#define UPGM_UINT8(addr) addr
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdio.h>
-#else
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#if defined(__AVR__)
-#include <avr/pgmspace.h>
-#define UPGM_UINT8(addr) pgm_read_byte((char *)&addr)
-#else
+
 #define PROGMEM
 #define UPGM_UINT8(addr) addr
-#endif // __AVR__
-#endif
 
 #if defined(__cplusplus)
 #define def_urus_T template<typename T>
