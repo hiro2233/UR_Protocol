@@ -27,8 +27,17 @@
 #include <stdint.h>
 #include <string.h>
 
-#define PROGMEM
+#ifndef PROGMEM
+//#define PROGMEM
+#endif
+
+#if defined(__AVR__)
+//#include <avr/pgmspace.h>
+//#define UPGM_UINT8(addr) pgm_read_byte(addr)
 #define UPGM_UINT8(addr) addr
+#else
+#define UPGM_UINT8(addr) addr
+#endif
 
 #if defined(__cplusplus)
 #define def_urus_T template<typename T>
@@ -48,7 +57,7 @@ typedef uint8_t T;
 /* URUS MAX SLOTS OBJECTS */
 #define URUS_MAX_SLOTS      5
 
-#define DEBUG_URUS 1
+#define DEBUG_URUS 0
 
 class URUS_Protocol {
 public:
@@ -99,8 +108,8 @@ public:
     uint8_t *tx_buffer;
     bool is_tx_request;
 
-    static const urus_slot_s ur_internal_slot_sizes[] PROGMEM;
-    static const urus_slot_s ur_external_slot_sizes[] PROGMEM;
+    static const urus_slot_s ur_internal_slot_sizes[];
+    static const urus_slot_s ur_external_slot_sizes[];
 
 private:
 

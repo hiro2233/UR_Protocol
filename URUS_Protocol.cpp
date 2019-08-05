@@ -27,7 +27,7 @@
 
 #include "URUS_Protocol.h"
 
-const urus_slot_s URUS_Protocol::ur_internal_slot_sizes[] PROGMEM = {
+const urus_slot_s URUS_Protocol::ur_internal_slot_sizes[] = {
     add_reg_slot(URUS_REG_HDRID,    urus_headerid_t ),
     add_reg_slot(URUS_REG_TXREG,    urus_txreg_t    ),
     add_reg_slot(URUS_REG_RC_CHAN,  urus_rc_chan_t  ),
@@ -413,8 +413,10 @@ uint8_t URUS_Protocol::Process_Data(uint8_t data, uint8_t offset)
 
 RESET_ALL:
     _counter_dat = 0;
+    //if (_hit) {
+        _headerid = 0;
+    //}
     _hit = false;
-    _headerid = 0;
     _countlen = 0;
     _count_offset = 0;
     _is_tx = false;
