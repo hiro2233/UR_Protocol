@@ -6,33 +6,33 @@
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Debug">
+			<Target title="Debug_static">
 				<Option output="bin/Debug/client_protocol" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
-					<Add directory="../../../urus_protocol" />
+					<Add directory="../../../" />
 				</Compiler>
 				<Linker>
 					<Add option="-static" />
-					<Add library="URUS_Protocol" />
+					<Add library="UR_Protocol" />
 					<Add directory="../../build/lib/Debug" />
 				</Linker>
 			</Target>
-			<Target title="Release">
+			<Target title="Release_static">
 				<Option output="bin/Release/client_protocol" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
-					<Add directory="../../../urus_protocol" />
+					<Add directory="../../../" />
 				</Compiler>
 				<Linker>
 					<Add option="-static" />
-					<Add library="URUS_Protocol" />
+					<Add library="UR_Protocol" />
 					<Add directory="../../build/lib/Release/" />
 				</Linker>
 			</Target>
