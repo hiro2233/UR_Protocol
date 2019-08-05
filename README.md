@@ -1,7 +1,9 @@
 # URUS Protocol
 
 Urus Protocol - A fast, dynamic and real time universal protocol for robotics and automated systems.
+
 Copyright (c) 2015-2017 Hiroshi Takey F. (hiro2233) <htakey@gmail.com>
+
 Licensed under LGPL v2.1.
 
 ## Building and Testing
