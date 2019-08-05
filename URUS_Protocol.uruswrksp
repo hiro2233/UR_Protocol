@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<UrusStudio_workspace_file>
+	<Workspace title="Workspace">
+		<Project filename="URUS_Protocol.usp" />
+		<Project filename="Tests/client_protocol/client_protocol.usp" />
+	</Workspace>
+</UrusStudio_workspace_file>
