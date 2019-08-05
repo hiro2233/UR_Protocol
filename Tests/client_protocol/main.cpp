@@ -16,7 +16,7 @@ typedef struct __urus_test_t
 } urus_test_t;
 #pragma pack(pop)
 
-const urus_slot_s URUS_Protocol::ur_external_slot_sizes[] PROGMEM = {
+const urus_slot_s URUS_Protocol::ur_external_slot_sizes[] = {
     add_reg_slot(OBJ1, urus_test_t)
 };
 
