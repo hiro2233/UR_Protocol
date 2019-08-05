@@ -2,12 +2,12 @@
 <UrusStudio_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="URUS_Protocol" />
+		<Option title="UR_Protocol" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug_dll">
-				<Option output="build/lib/Debug/URUS_Protocol" prefix_auto="1" extension_auto="1" />
+				<Option output="build/lib/Debug/UR_Protocol" prefix_auto="1" extension_auto="1" />
 				<Option object_output="build/.obj/dll/Debug/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -20,7 +20,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release_dll">
-				<Option output="build/lib/Release/URUS_Protocol" prefix_auto="1" extension_auto="1" />
+				<Option output="build/lib/Release/UR_Protocol" prefix_auto="1" extension_auto="1" />
 				<Option object_output="build/.obj/dll/Release/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -33,7 +33,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Debug_static">
-				<Option output="build/lib/Debug/URUS_Protocol" prefix_auto="1" extension_auto="1" />
+				<Option output="build/lib/Debug/UR_Protocol" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="build/.obj/static/Debug/" />
 				<Option type="2" />
@@ -45,7 +45,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release_static">
-				<Option output="build/lib/Release/URUS_Protocol" prefix_auto="1" extension_auto="1" />
+				<Option output="build/lib/Release/UR_Protocol" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="build/.obj/static/Release/" />
 				<Option type="2" />
@@ -62,10 +62,10 @@
 			<Add option="-std=gnu++11" />
 			<Add option="-std=gnu99" />
 		</Compiler>
-		<Unit filename="UR_Protocol/URUS_Protocol.cpp" />
-		<Unit filename="UR_Protocol/URUS_Protocol.h" />
-		<Unit filename="UR_Protocol/URUS_ProtocolTypes.h" />
-		<Unit filename="UR_Protocol/structures/URUS_ProtocolTypesEXT.h" />
+		<Unit filename="URUS_Protocol.cpp" />
+		<Unit filename="URUS_Protocol.h" />
+		<Unit filename="URUS_ProtocolTypes.h" />
+		<Unit filename="structures/URUS_ProtocolTypesEXT.h" />
 		<Extensions>
 			<envvars />
 			<code_completion />
