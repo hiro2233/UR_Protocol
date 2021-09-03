@@ -1,6 +1,17 @@
 #include "UR_RingBuffer.h"
 
+#if defined(SHAL_CORE_APM2) \
+    || defined(SHAL_CORE_MEGA02) \
+    || defined(SHAL_CORE_APM328) \
+    || defined(SHAL_CORE_APM32U4)
+
+#include <AP_HAL_URUS/AP_HAL_URUS.h>
 extern const AP_HAL::HAL& hal;
+#define DEBUG(s, ...) hal.console->printf_PS(s, ## __VA_ARGS__)
+#else
+#define PSTR(s) s
+#define DEBUG(s, ...) printf(s, ## __VA_ARGS__)
+#endif
 
 #if TEST_RINGBUF == ENABLED
 void test_ringbuffer()
@@ -14,31 +25,28 @@ void test_ringbuffer()
 
     // pulling from an empty buffer will not work
     buf_item_t elem = ringbuf_get(&buffer);
-    hal.console->printf_PS(PSTR("buf %s\n"), RBUF_EMPTY ==  (int)elem.cnt ? "empty" : "not empty");
+    DEBUG(PSTR("buf %s\n"), RBUF_EMPTY ==  (int)elem.time ? "empty" : "not empty");
 
     // fill up the buffer
     for (int i = 0; i < RBUF_SIZE; ++i) {
-        b_item.cnt = i + 1;
-        b_item.time = AP_HAL::micros();
+        b_item.time = i + 1;
         ringbuf_put(&buffer, b_item);
     }
 
     // show buffer
     ringbuf_print(&buffer);
     buf_item_t item_tmp = ringbuf_peek(&buffer);
-    hal.console->printf_PS(PSTR("1st out: %lu\n"), item_tmp.cnt);
+    DEBUG(PSTR("1st out: %u\n"), item_tmp.time);
 
     // buffer is full, trying to insert will not work
-    b_item.cnt = 42;
-    b_item.time = AP_HAL::micros();
+    b_item.time = 42;
     ringbuf_put(&buffer, b_item);
 
     // however if we delete some from the buffer
     ringbuf_get(&buffer);
 
     // we can insert again
-    b_item.cnt = 42;
-    b_item.time = AP_HAL::micros();
+    b_item.time = 42;
     ringbuf_put(&buffer, b_item);
     ringbuf_print(&buffer);
 
@@ -113,10 +121,10 @@ buf_item_t ringbuf_peek(rbuf_t* _this)
 void ringbuf_print(rbuf_t* _this)
 {
     for (int i = 0; i < RBUF_SIZE; i++) {
-        hal.console->printf_PS(PSTR("%2d:%09lu\n"), i, _this->buf[i].time);
+        DEBUG(PSTR("%2d:%09u\n"), i, _this->buf[i].time);
     }
 
-    hal.console->printf_PS(PSTR("\n"));
+    DEBUG(PSTR("\n"));
 }
 
 void ringbuf_flush(rbuf_t* _this, rbuf_opt_e clear)
