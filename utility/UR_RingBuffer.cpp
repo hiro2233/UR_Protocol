@@ -7,7 +7,7 @@
 
 #include <AP_HAL_URUS/AP_HAL_URUS.h>
 extern const AP_HAL::HAL& hal;
-#define DEBUG(s, ...) hal.console->printf_PS(s, ## __VA_ARGS__)
+#define DEBUG(s, ...) hal.console->printf_PS(PSTR(s), ## __VA_ARGS__)
 #else
 #define PSTR(s) s
 #define DEBUG(s, ...) printf(s, ## __VA_ARGS__)
@@ -25,7 +25,7 @@ void test_ringbuffer()
 
     // pulling from an empty buffer will not work
     buf_item_t elem = ringbuf_get(&buffer);
-    DEBUG(PSTR("buf %s\n"), RBUF_EMPTY ==  (int)elem.time ? "empty" : "not empty");
+    DEBUG("buf %s\n", RBUF_EMPTY ==  (int)elem.time ? "empty" : "not empty");
 
     // fill up the buffer
     for (int i = 0; i < RBUF_SIZE; ++i) {
@@ -36,7 +36,7 @@ void test_ringbuffer()
     // show buffer
     ringbuf_print(&buffer);
     buf_item_t item_tmp = ringbuf_peek(&buffer);
-    DEBUG(PSTR("1st out: %u\n"), item_tmp.time);
+    DEBUG("1st out: %u\n", item_tmp.time);
 
     // buffer is full, trying to insert will not work
     b_item.time = 42;
@@ -121,10 +121,10 @@ buf_item_t ringbuf_peek(rbuf_t* _this)
 void ringbuf_print(rbuf_t* _this)
 {
     for (int i = 0; i < RBUF_SIZE; i++) {
-        DEBUG(PSTR("%2d:%09u\n"), i, _this->buf[i].time);
+        DEBUG("%2d:%09u\n", i, _this->buf[i].time);
     }
 
-    DEBUG(PSTR("\n"));
+    DEBUG("\n");
 }
 
 void ringbuf_flush(rbuf_t* _this, rbuf_opt_e clear)

@@ -1,7 +1,16 @@
 #ifndef RING_BUF_H
 #define RING_BUF_H
 
-#include <AP_HAL_URUS/AP_HAL_URUS.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
+
+#ifndef DISABLED
+#define DISABLED 0
+#endif // DISABLED
+#ifndef ENABLED
+#define ENABLED 1
+#endif // ENABLED
 
 #define TEST_RINGBUF    DISABLED
 
@@ -58,5 +67,9 @@ void ringbuf_print(rbuf_t* _this);
 
 // advance the ring buffer index
 unsigned int ringbuf_adv (const unsigned int value, const unsigned int max_val);
+
+#if TEST_RINGBUF == ENABLED
+void test_ringbuffer();
+#endif // TEST_RINGBUF
 
 #endif
