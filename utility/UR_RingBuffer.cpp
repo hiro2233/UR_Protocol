@@ -88,7 +88,7 @@ buf_item_t ringbuf_get(rbuf_t* _this)
         --_this->count;
     } else {
         // the queue is empty
-        item.time = (uint32_t)RBUF_EMPTY;
+        item.time = (uint16_t)RBUF_EMPTY;
     }
 
     return item;

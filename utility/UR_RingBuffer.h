@@ -15,10 +15,10 @@
 #define TEST_RINGBUF    DISABLED
 
 // maximum buffer size
-#define RBUF_SIZE 32
+#define RBUF_SIZE 40
 
 typedef struct __buf_item_s {
-    uint32_t time;
+    uint16_t time;
 } buf_item_t;
 
 // buffer structure
