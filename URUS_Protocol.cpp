@@ -382,7 +382,7 @@ uint8_t URUS_Protocol::Process_Data(uint8_t data, uint8_t offset)
 
             if (_is_tx) {
                 _checking_reg_len = false;
-                delete tx_buffer;
+                delete[] tx_buffer;
                 tx_buffer = new uint8_t[_countlen];
                 _ur_buffer_inf.txlen = _countlen;
                 tx_buffer[0] = data;
@@ -394,7 +394,7 @@ uint8_t URUS_Protocol::Process_Data(uint8_t data, uint8_t offset)
             }
 
             _checking_reg_len = false;
-            delete rx_buffer;
+            delete[] rx_buffer;
             rx_buffer = new uint8_t[_countlen];
             _ur_buffer_inf.rxlen = _countlen;
             rx_buffer[0] = data;
@@ -500,7 +500,7 @@ uint8_t URUS_Protocol::Poll_Tx_Buffer(uint8_t data)
             urus_txreg_t urtxreg;
             _Get_DataReg((uint8_t*)&urtxreg);
 
-            delete tx_buffer;
+            delete[] tx_buffer;
             uint8_t cntlen = Get_RegLen(urtxreg.TargetReg);
 
             _ur_buffer_inf.txlen = cntlen;
