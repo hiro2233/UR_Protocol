@@ -36,10 +36,10 @@ const urus_slot_s URUS_Protocol::ur_internal_slot_sizes[] = {
 };
 
 URUS_Protocol::URUS_Protocol():
-    rx_buffer(new uint8_t),
-    tx_buffer(new uint8_t),
+    rx_buffer(new uint8_t[1]),
+    tx_buffer(new uint8_t[1]),
     _count_obj(0),
-    _rxdat(new uint8_t),
+    //_rxdat(new uint8_t),
     _in_txbuffer(0),
     _in_rxbuffer(0),
     _counter_dat(0)
@@ -66,7 +66,7 @@ urus_slot_info_t URUS_Protocol::check_slot_reg(uint8_t obj_type)
             slot_info.UError = slot_error_t::IN_USE;
             slot_info.reg = obj_type;
             slot_info.pos = i2;
-            slot_info.len = Get_RegLen(slot_info.reg);
+            slot_info.len = _ur_objects[i2].len;
             break;
         }
     }
@@ -374,6 +374,7 @@ uint8_t URUS_Protocol::Process_Data(uint8_t data, uint8_t offset)
 #endif
                     goto RESET_ALL;
                 }
+                _Resize_Buffer(rx_buffer, _countlen);
             }
 
             if ((data == _ur_txreg.reg) && (_is_tx == false) && (_countlen <= sizeof(urus_txreg_t))) {
@@ -394,8 +395,8 @@ uint8_t URUS_Protocol::Process_Data(uint8_t data, uint8_t offset)
             }
 
             _checking_reg_len = false;
-            delete[] rx_buffer;
-            rx_buffer = new uint8_t[_countlen];
+            //delete[] rx_buffer;
+            //rx_buffer = new uint8_t[_countlen];
             _ur_buffer_inf.rxlen = _countlen;
             rx_buffer[0] = data;
             _in_rxbuffer = 1;
@@ -453,8 +454,12 @@ uint8_t URUS_Protocol::Poll_Rx_Buffer(uint8_t data)
 		if (_counter_dat < (_ur_buffer_inf.rxlen)) {
             rx_buffer[_counter_dat] = data;
 
+        } else {
+            _ur_buffer_inf.rxupdated = _Set_DataReg(&rx_buffer[0]);
+            _in_rxbuffer = 0;
         }
 
+        /*
         if (_counter_dat >= (_ur_buffer_inf.rxlen - 1)) {
 
             urus_slot_info_t slotinfo;
@@ -469,6 +474,7 @@ uint8_t URUS_Protocol::Poll_Rx_Buffer(uint8_t data)
 
             _in_rxbuffer = 0;
         }
+        */
         _counter_dat++;
     }
 
@@ -515,4 +521,14 @@ uint8_t URUS_Protocol::Poll_Tx_Buffer(uint8_t data)
     }
 
     return 0;
+}
+
+void URUS_Protocol::_Resize_Buffer(uint8_t*& buffer, uint8_t new_len)
+{
+    if (new_len > _max_buf_len) {
+        delete[] buffer;
+        buffer = new uint8_t[new_len];
+        _max_buf_len = new_len;
+    }
+    memset(buffer, 0, _max_buf_len);
 }

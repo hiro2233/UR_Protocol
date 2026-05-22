@@ -104,8 +104,8 @@ public:
 
     bool checkendianess;
 
-    uint8_t *rx_buffer;
-    uint8_t *tx_buffer;
+    uint8_t *rx_buffer = nullptr;
+    uint8_t *tx_buffer = nullptr;
     bool is_tx_request;
 
     static const urus_slot_s ur_internal_slot_sizes[];
@@ -116,6 +116,7 @@ private:
     uint8_t _SerializeMessage(uint8_t ptr_reg, uint8_t* msg_data, uint8_t include_hdrid);
     uint8_t _Set_DataReg(uint8_t* ptr_reg);
     uint8_t _Get_DataReg(uint8_t* ptr_reg);
+    void _Resize_Buffer(uint8_t*& buffer, uint8_t new_len);
 
     urus_headerid_t _ur_hdrid_tget;
     urus_headerid_t _ur_hdrid_reply;
@@ -123,7 +124,7 @@ private:
 	urus_objects_t _ur_objects[URUS_MAX_SLOTS];
 	uint8_t _count_obj;
     urus_txreg_t _ur_txreg;
-    uint8_t *_rxdat;
+    //uint8_t *_rxdat = nullptr;
     urus_buffer_info_t _ur_buffer_inf;
     uint8_t _in_txbuffer;
     uint8_t _in_rxbuffer;
@@ -141,4 +142,6 @@ private:
 
     bool _checking_reg_len = false;
     uint8_t _counter_dat;
+
+    uint8_t _max_buf_len;
 };
